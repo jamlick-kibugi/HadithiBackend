@@ -51,14 +51,14 @@ const reviewChain = new LLMChain({
 
 const imageModel = new Replicate({
   model:
-    "ai-forever/kandinsky-2:601eea49d49003e6ea75a11527209c4f510a93e2112c969d548fbb45b9c4f19f",
+    "stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
   apiKey: process.env.REPLICATE_API_KEY,
   input: { image_dimensions: "512x512" },
 });
 
 const imageTemplate = new PromptTemplate({
   template:
-  "output an image for {pageDescription} in the style of a children's book illustration",
+  "{pageDescription} ",
 inputVariables: ["pageDescription"],
   
 });
@@ -126,8 +126,7 @@ const createImage = async (req, res) => {
  
   const overallChain = new SimpleSequentialChain({
     chains: [imageChain],
-    verbose: true,
-    
+    verbose: true,    
      
   });
   const review = await overallChain.run(imageDesc);

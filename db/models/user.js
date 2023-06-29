@@ -1,8 +1,8 @@
- 
+"use strict";
 const { DataTypes } = require("sequelize");
-const initStory= (sequelize) =>
+const initUser= (sequelize) =>
   sequelize.define(
-    "Story",
+    "User",
     {
       id: {
         allowNull: false,
@@ -10,30 +10,23 @@ const initStory= (sequelize) =>
         primaryKey: true,
         type: DataTypes.INTEGER
       },
-      userId: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: "users",  
-          key: "id",
-        }
+      firstName: {
+        type: DataTypes.STRING
       },
-      title: {
-        type: DataTypes.TEXT
-      },   
-      coverUrl:{
+      lastName: {
+        type: DataTypes.STRING
+      },
+      email: {
         type:DataTypes.STRING
-      }  ,        
-      createdAt: {
+      },      
+      created_at: {
         allowNull: false,
         type: DataTypes.DATE
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: DataTypes.DATE
-      } 
-     
-      
-       
+      }
     },
     {
       underscored: true,
@@ -41,4 +34,4 @@ const initStory= (sequelize) =>
   );
 
   
-module.exports = initStory;
+module.exports = initUser;

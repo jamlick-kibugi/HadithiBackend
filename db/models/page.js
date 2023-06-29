@@ -1,8 +1,8 @@
  
 const { DataTypes } = require("sequelize");
-const initStory= (sequelize) =>
+const initPage= (sequelize) =>
   sequelize.define(
-    "Story",
+    "Page",
     {
       id: {
         allowNull: false,
@@ -10,17 +10,23 @@ const initStory= (sequelize) =>
         primaryKey: true,
         type: DataTypes.INTEGER
       },
-      userId: {
+      storyId: {
         type: DataTypes.INTEGER,
         references: {
-          model: "users",  
+          model: "stories",  
           key: "id",
         }
       },
-      title: {
+      pageNumber: {
+        type: DataTypes.INTEGER
+      },   
+      pageContent: {
         type: DataTypes.TEXT
       },   
-      coverUrl:{
+      prompt:{
+        type: DataTypes.TEXT
+      },
+      pageUrl:{
         type:DataTypes.STRING
       }  ,        
       createdAt: {
@@ -41,4 +47,4 @@ const initStory= (sequelize) =>
   );
 
   
-module.exports = initStory;
+module.exports = initPage;

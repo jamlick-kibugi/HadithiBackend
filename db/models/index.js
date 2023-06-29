@@ -9,6 +9,8 @@ const process = require('process');
 const initCollab = require('./Collab');
 const initStory = require('./story')
 const initImage = require('./image')
+const initUser = require('./user');
+const initPage = require('./page');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../../config/database.js')[env];
@@ -41,9 +43,22 @@ if (config.use_env_variable) {
 //     db[modelName].associate(db);
 //   }
 // });
+
+
+db.User = initUser(sequelize)
 db.Collab = initCollab(sequelize)
 db.Story = initStory(sequelize)
+db.Page = initPage(sequelize)
 db.Image =initImage(sequelize)
+
+//1-m 
+db.User.hasMany(db.Story);
+db.Story.belongsTo(db.User);
+
+db.Story.hasMany(db.Page)
+db.Page.belongsTo(db.Story)
+
+
 
 db.Story.hasMany(db.Image);
 db.Image.belongsTo(db.Story);

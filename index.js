@@ -7,6 +7,10 @@ app.use(cors());
 app.use(express.json()); 
 const collabRouter =  require('./routers/collabRouter')
 const storyRouter =  require('./routers/storyRouter')
+const authRouter = require('./routers/authRouter')
+
+
+app.use("/auth", authRouter)
 app.use("/",collabRouter)
 app.use("/story",storyRouter)
 
