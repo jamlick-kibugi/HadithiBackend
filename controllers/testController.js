@@ -21,6 +21,7 @@ const { uploadBytes, getDownloadURL, ref }= require("firebase/storage");
 // const { saveFile } = require("../utils/saveUrl");
 const {Story} =db;
 const {Page} = db;
+const {User} = db;
     
 // This is an LLMChain to write a story of a book, given the context,character and location
 const llm = new OpenAI({ 
@@ -161,9 +162,9 @@ const createTest =  async (req, res) => {
         verbose: true,
       });
       const chainExecutionResult = await overallChain.call({
-        content: "an epic space battle",
-        character: "a monkey with a yellow hat",
-        location:"a space station",      
+        content: "the fall of the jelly kingdom",
+        character: "the jelly king",
+        location:"a jelly castle",      
       });
       const story=formatData(chainExecutionResult.story)
 
@@ -295,11 +296,21 @@ const createPage = async(req,res)=>{
 
 }
 
+const getStory =  async (req, res) => {
+  
+  const { storyId} = req.params;    
+   
+  const story = await Story.findAll({include: [
+    { model: User} ]   ,where:{id : storyId}
+  });
+  res.json(story)
+
+}
 const getPages = async(req,res)=>{
  
   const { storyId,page,size } = req.params;    
-  const pages = await Page.findAndCountAll({where: { storyId: storyId }  ,order:["pageNumber"], limit: size,
-      offset: page * size,});   
+  const pages = await Page.findAndCountAll({where: { storyId: storyId }, include:[{model:Story,include: [User]}],order:["pageNumber"], limit: size,
+      offset: page * size});   
   res.json(pages)
 }
 
@@ -309,6 +320,7 @@ module.exports = {
    
     createTest,
     getAllStory,
+    getStory,
     createCover,
     createPage,
     getPages,

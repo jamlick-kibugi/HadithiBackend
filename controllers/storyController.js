@@ -11,6 +11,7 @@ const { OpenAI } = require("langchain/llms/openai");
 const  { SequentialChain, LLMChain } = require("langchain/chains");
 const { PromptTemplate } = require("langchain/prompts");
 const {Story} =db;
+const {User} =db;
  
  
 const getStory =  async (req, res) => {

@@ -11,6 +11,7 @@ const initStory = require('./story')
 const initImage = require('./image')
 const initUser = require('./user');
 const initPage = require('./page');
+const initComment = require('./comment');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../../config/database.js')[env];
@@ -50,6 +51,7 @@ db.Collab = initCollab(sequelize)
 db.Story = initStory(sequelize)
 db.Page = initPage(sequelize)
 db.Image =initImage(sequelize)
+db.Comment = initComment(sequelize)
 
 //1-m 
 db.User.hasMany(db.Story);
@@ -58,10 +60,13 @@ db.Story.belongsTo(db.User);
 db.Story.hasMany(db.Page)
 db.Page.belongsTo(db.Story)
 
-
-
 db.Story.hasMany(db.Image);
 db.Image.belongsTo(db.Story);
+
+db.Story.hasMany(db.Comment);
+db.Comment.belongsTo(db.Story);
+
+
  
 
 db.Sequelize = Sequelize;
