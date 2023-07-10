@@ -12,11 +12,13 @@ const  { SequentialChain, LLMChain } = require("langchain/chains");
 const { PromptTemplate } = require("langchain/prompts");
 const {Story} =db;
 const {User} =db;
+const {Likes} =db;
+ 
  
  
 const getStory =  async (req, res) => {
   
-    const story = await Story.findAll();
+    const story = await Story.findAll({include:[Likes]});
     
 
     res.send(story)

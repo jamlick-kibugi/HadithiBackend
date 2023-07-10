@@ -22,6 +22,7 @@ const { uploadBytes, getDownloadURL, ref }= require("firebase/storage");
 const {Story} =db;
 const {Page} = db;
 const {User} = db;
+const {Like} = db;
     
 // This is an LLMChain to write a story of a book, given the context,character and location
 const llm = new OpenAI({ 
@@ -29,17 +30,17 @@ const llm = new OpenAI({
   temperature: 0, 
   openAIApiKey: process.env.OPENAI_API_KEY,
 maxTokens:1000 });
-const template = `You are a story teller. write a 400 words story about {content}.
+const template = `You are a story teller. write a {length} words story about {content}.write in the style of a {genre} for children who are aged {age}
 
 The main character has the following appearance {character}
 and the story takes place in {location}
 
 
-please remember to keep it to 400 words and not less than that. after you finish writing check if there are 400 words if there are less than 400 words please continue the story 
+please remember to keep it to {length} words and not less than that. after you finish writing check if there are {length} words if there are less than {length} words please continue the story 
 ` ;
 const promptTemplate = new PromptTemplate({
   template,
-  inputVariables: ["content", "character","location"],
+  inputVariables: ["content", "character","location","genre","age","length"],
 });
 const storyChain = new LLMChain({
   llm,
@@ -110,8 +111,8 @@ const imageModel = new Replicate({
 
 const imageTemplate = new PromptTemplate({
   template:
-  "output an image for {imagePrompt} in the style of a children's book illustration, make sure the image is like a cartoon and has warm earthy hues ",
-inputVariables: ["imagePrompt"],
+  "output an image for {imagePrompt} in the style of a {style}, make sure the image is like a cartoon and has warm earthy hues ",
+inputVariables: ["imagePrompt","style"],
   
 });
 
@@ -147,31 +148,40 @@ const coverChain = new LLMChain({
 });
 
 const getAllStory = async(req,res) =>{
-  const allStory = await Story.findAll({})
+  
+  const allStory = await Story.findAll(
+    {include: [ {model:Like} ]}
+  )
 
-  res.json(allStory)
+  res.json( allStory)
 }
 
-const createTest =  async (req, res) => {  
+const createTest =  async (req, res) => { 
+  
+  const{content:userContent,character,location,genre,age,length,numOfPages,style} = req.body
 
     const overallChain = new SequentialChain({
         chains: [storyChain,coverChain,titleChain],
-        inputVariables: ["content", "character","location"],
+        inputVariables: ["content", "character","location","genre","age","length"],
         // Here we return multiple variables
         outputVariables: ["story", "coverUrl","title"],
         verbose: true,
       });
       const chainExecutionResult = await overallChain.call({
-        content: "the fall of the jelly kingdom",
-        character: "the jelly king",
-        location:"a jelly castle",      
+        content: userContent,
+        character: character,
+        location:location,  
+        genre: genre,
+        age: age,
+        length: length
+
       });
       const story=formatData(chainExecutionResult.story)
 
 
       //--------------TEST CODE---------------------
       const content = formatData(chainExecutionResult.story)
-      const paragraphs=formatPage(content,5)
+      const paragraphs=formatPage(content,numOfPages)
       const title = formatData(chainExecutionResult.title)
       const coverUrl = formatData(chainExecutionResult.coverUrl)
       // let filename = ""
@@ -216,12 +226,13 @@ const createTest =  async (req, res) => {
 
         const overallChain = new SequentialChain({
           chains: [imagePromptChain,imageChain],
-          inputVariables: ["paragraph"],          
+          inputVariables: ["paragraph","style"],          
           outputVariables: ["imagePrompt","imageUrl"],
           verbose: true,
         });
         const chainExecutionResult = await overallChain.call({
-          paragraph: paragraphs[i],           
+          paragraph: paragraphs[i],    
+          style : style       
         });
 
         const imagePrompt = formatData(chainExecutionResult.imagePrompt)
@@ -267,7 +278,7 @@ const createTest =  async (req, res) => {
 }
 
 const createCover = async(req,res)=>{
-  const {coverUrl,title,userId} = req.body
+  const {coverUrl,title,userId,styke} = req.body
    const newStory= await Story.create({        
       updated_at: new Date(),
       created_at: new Date(),  
@@ -301,7 +312,7 @@ const getStory =  async (req, res) => {
   const { storyId} = req.params;    
    
   const story = await Story.findAll({include: [
-    { model: User} ]   ,where:{id : storyId}
+    { model: User},{model:Like} ]   ,where:{id : storyId}
   });
   res.json(story)
 

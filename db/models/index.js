@@ -12,6 +12,9 @@ const initImage = require('./image')
 const initUser = require('./user');
 const initPage = require('./page');
 const initComment = require('./comment');
+const initLike = require('./likes');
+const initIllustration = require('./illustration');
+ 
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../../config/database.js')[env];
@@ -52,10 +55,18 @@ db.Story = initStory(sequelize)
 db.Page = initPage(sequelize)
 db.Image =initImage(sequelize)
 db.Comment = initComment(sequelize)
+db.Like = initLike(sequelize)
+db.Illustration = initIllustration(sequelize)
 
 //1-m 
 db.User.hasMany(db.Story);
 db.Story.belongsTo(db.User);
+
+db.User.hasMany(db.Like);
+db.Like.belongsTo(db.User);
+
+db.Story.hasMany(db.Like);
+db.Like.belongsTo(db.Story);
 
 db.Story.hasMany(db.Page)
 db.Page.belongsTo(db.Story)
@@ -65,6 +76,9 @@ db.Image.belongsTo(db.Story);
 
 db.Story.hasMany(db.Comment);
 db.Comment.belongsTo(db.Story);
+
+db.User.hasMany(db.Illustration)
+db.Illustration.belongsTo(db.User)
 
 
  
