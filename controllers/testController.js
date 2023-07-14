@@ -158,7 +158,48 @@ const getAllStory = async(req,res) =>{
 
 const createTest =  async (req, res) => { 
   
-  const{content:userContent,character,location,genre,age,length,numOfPages,style} = req.body
+  let{content:userContent,character,location,genre,age,length,numOfPages,style} = req.body
+
+  const setGenre=()=>{
+    if(genre==1){
+      genre = "Fairytale"
+    }
+    else if(genre==2){
+      genre = "Adventure"
+    }
+    else if(genre==3){
+      genre = "Mystery"
+    }
+    else if(genre==4){
+      genre = "Science Fiction"
+    }
+    else if(genre==5){
+      genre = "Horror"
+    }
+  }
+
+  
+
+  const setAge=()=>{
+    if(age==1){
+      age = 2
+    }
+    else if(age==2){
+      age = 4
+    }
+    else if(age==3){
+      age = 6
+    }
+    else if(age==4){
+      age = 8
+    }
+    else if(age==5){
+      age = 10
+    }
+  }
+
+  setGenre()
+  setAge()
 
     const overallChain = new SequentialChain({
         chains: [storyChain,coverChain,titleChain],
@@ -278,13 +319,15 @@ const createTest =  async (req, res) => {
 }
 
 const createCover = async(req,res)=>{
-  const {coverUrl,title,userId,styke} = req.body
+  const {coverUrl,title,userId,style,ageId,genreId} = req.body
    const newStory= await Story.create({        
       updated_at: new Date(),
       created_at: new Date(),  
       title:title,
       coverUrl:coverUrl   ,
-      userId:userId
+      userId:userId,
+      ageId:ageId,
+      genreId:genreId
     });
 
   res.json(newStory)

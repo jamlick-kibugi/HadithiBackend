@@ -11,7 +11,7 @@ const authRouter = require('./routers/authRouter')
 
 
 app.use("/auth", authRouter)
-app.use("/",collabRouter)
+app.use("/collab",collabRouter)
 app.use("/story",storyRouter)
 
 app.listen(port, () => {

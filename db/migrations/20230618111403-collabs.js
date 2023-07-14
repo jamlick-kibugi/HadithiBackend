@@ -8,15 +8,19 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      image_url: {
+      prompt: {
         type: Sequelize.STRING,
       },
-      content: {
-        type: Sequelize.STRING,
-      },      
-     page_number:{
-      type: Sequelize.INTEGER,
+      guide:{
+        type:Sequelize.TEXT,
+
+      },
+      created_by: {
+        type: Sequelize.INTEGER,
      },
+     cover_url:{
+      type: Sequelize.STRING,
+     },      
      created_at: {
       allowNull: false,
       type: Sequelize.DATE,
@@ -25,6 +29,13 @@ module.exports = {
       allowNull: false,
       type: Sequelize.DATE,
     },
+    user_id: {
+      type: Sequelize.INTEGER,
+      references:{
+        model:"users",
+        key:"id"
+      }
+    },     
       
     });
   },

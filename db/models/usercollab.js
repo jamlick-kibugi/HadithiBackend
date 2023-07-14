@@ -1,8 +1,8 @@
- 
+"use strict";
 const { DataTypes } = require("sequelize");
-const initStory= (sequelize) =>
+const initUsercollab= (sequelize) =>
   sequelize.define(
-    "Story",
+    "Usercollab",
     {
       id: {
         allowNull: false,
@@ -12,42 +12,28 @@ const initStory= (sequelize) =>
       },
       userId: {
         type: DataTypes.INTEGER,
+        allowNull: false,
         references: {
           model: "users",  
           key: "id",
         }
       },
-      genreId: {
+      collabId: {
         type: DataTypes.INTEGER,
+        allowNull: false,
         references: {
-          model: "genres",  
+          model: "collabs", 
           key: "id",
         }
-      },
-      ageId: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: "ages",  
-          key: "id",
-        }
-      },
-      title: {
-        type: DataTypes.TEXT
-      },   
-      coverUrl:{
-        type:DataTypes.STRING
-      }  ,        
+      },       
       createdAt: {
-        
+        allowNull: false,
         type: DataTypes.DATE
       },
       updatedAt: {
-        
+        allowNull: false,
         type: DataTypes.DATE
-      } 
-     
-      
-       
+      }
     },
     {
       underscored: true,
@@ -55,4 +41,4 @@ const initStory= (sequelize) =>
   );
 
   
-module.exports = initStory;
+module.exports = initUsercollab;

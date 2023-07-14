@@ -1,8 +1,8 @@
  
 const { DataTypes } = require("sequelize");
-const initStory= (sequelize) =>
+const initCollabpage= (sequelize) =>
   sequelize.define(
-    "Story",
+    "Collabpage",
     {
       id: {
         allowNull: false,
@@ -10,39 +10,28 @@ const initStory= (sequelize) =>
         primaryKey: true,
         type: DataTypes.INTEGER
       },
-      userId: {
+      collabId: {
         type: DataTypes.INTEGER,
         references: {
-          model: "users",  
+          model: "collabs",  
           key: "id",
         }
       },
-      genreId: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: "genres",  
-          key: "id",
-        }
-      },
-      ageId: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: "ages",  
-          key: "id",
-        }
-      },
-      title: {
+      pageNumber: {
+        type: DataTypes.INTEGER
+      },   
+      pageContent: {
         type: DataTypes.TEXT
       },   
-      coverUrl:{
+      pageUrl:{
         type:DataTypes.STRING
       }  ,        
       createdAt: {
-        
+        allowNull: false,
         type: DataTypes.DATE
       },
       updatedAt: {
-        
+        allowNull: false,
         type: DataTypes.DATE
       } 
      
@@ -55,4 +44,4 @@ const initStory= (sequelize) =>
   );
 
   
-module.exports = initStory;
+module.exports = initCollabpage;

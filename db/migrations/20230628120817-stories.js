@@ -21,15 +21,26 @@ module.exports = {
       cover_url:{
         type:Sequelize.STRING,
 
-      },
-      
-      created_at: {
-        allowNull: false,
+      },      
+      created_at: {        
         type: Sequelize.DATE,
       },
-      updated_at: {
-        allowNull: false,
+      updated_at: {        
         type: Sequelize.DATE,
+      },
+      genre_id: {
+        type: Sequelize.INTEGER,
+        references:{
+          model:"genres",
+          key:"id"
+        }
+      },
+      age_id: {
+        type: Sequelize.INTEGER,
+        references:{
+          model:"ages",
+          key:"id"
+        }
       },
    
       

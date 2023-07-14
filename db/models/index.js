@@ -14,7 +14,11 @@ const initPage = require('./page');
 const initComment = require('./comment');
 const initLike = require('./likes');
 const initIllustration = require('./illustration');
- 
+const initGenre = require('./genre');
+const initAge = require('./age');
+const initCollabpage = require('./collabpage')
+const initUsercollab = require('./usercollab')
+
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../../config/database.js')[env];
@@ -57,8 +61,23 @@ db.Image =initImage(sequelize)
 db.Comment = initComment(sequelize)
 db.Like = initLike(sequelize)
 db.Illustration = initIllustration(sequelize)
-
+db.Genre = initGenre(sequelize)
+db.Age = initAge(sequelize)
+db.Collabpage = initCollabpage(sequelize)
+db.Usercollab = initUsercollab(sequelize)
 //1-m 
+
+ 
+
+db.Collab.hasMany(db.Collabpage)
+db.Collabpage.belongsTo(db.Collab)
+
+db.Age.hasMany(db.Story)
+db.Story.belongsTo(db.Age)
+
+db.Genre.hasMany(db.Story)
+db.Story.belongsTo(db.Genre)
+
 db.User.hasMany(db.Story);
 db.Story.belongsTo(db.User);
 
@@ -80,6 +99,14 @@ db.Comment.belongsTo(db.Story);
 db.User.hasMany(db.Illustration)
 db.Illustration.belongsTo(db.User)
 
+// db.User.hasMany(db.Collab)
+// db.Collab.belongsTo(db.User)
+
+//m-m
+db.Collab.belongsToMany(db.User , {onDelete:"CASCADE",through:db.Usercollab})
+db.User.belongsToMany(db.Collab, {through:db.Usercollab})
+db.Usercollab.belongsTo(db.User);
+db.Usercollab.belongsTo(db.Collab, {onDelete: "CASCADE"});
 
  
 
