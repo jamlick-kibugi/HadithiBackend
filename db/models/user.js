@@ -18,7 +18,13 @@ const initUser= (sequelize) =>
       },
       email: {
         type:DataTypes.STRING
-      },      
+      },    
+      picture:{
+        type:DataTypes.STRING
+      }  ,
+      biography:{
+        type:DataTypes.STRING
+      },
       created_at: {
         allowNull: false,
         type: DataTypes.DATE

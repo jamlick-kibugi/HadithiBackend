@@ -18,7 +18,7 @@ const {Likes} =db;
  
 const getStory =  async (req, res) => {
   
-    const story = await Story.findAll({include:[Likes]});
+    const story = await Story.findAll({include:[Likes],include:[User]});
     
 
     res.send(story)

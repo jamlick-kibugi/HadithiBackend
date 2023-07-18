@@ -4,9 +4,9 @@ const { OpenAI } = require("langchain/llms/openai");
 const  { SequentialChain, LLMChain } = require("langchain/chains");
 const { PromptTemplate } = require("langchain/prompts");
 const  Replicate  = require("replicate");
-const { Illustration } = require("../db/models");
+const db = require("../db/models/index");
  
- 
+const {Illustration} =db;
  
    
 
@@ -14,12 +14,7 @@ const { Illustration } = require("../db/models");
     auth: process.env.REPLICATE_API_KEY,     
   });
 
-  const getAllIllustrations = async(req,res)=>{ 
-    const {currentUserId} = req.params
-    const illustration = await Illustration.findAll({where:{
-      userId:currentUserId}})
-    res.send(illustration)
-  }
+
   
 const generateIllustration = async (req,res)=>{
     const{prompt,image} = req.body   
@@ -64,11 +59,38 @@ const saveIllustration = async (req,res)=>{
 
 }
 
+const getAllIllustrations = async(req,res)=>{ 
+  const {currentUserId,page,size} = req.params
+  const illustration = await Illustration.findAndCountAll({where:{
+    userId:currentUserId},limit: size,offset: page * size })
+
+    
+  res.json(illustration)
+  // res.send("hdi")
+}
+
+const deleteIllustration = async(req,res)=>{ 
+  const {currentIllustrationId} = req.params
+
+   
+  const illustration = await Illustration.destroy({
+    where:{
+      id:currentIllustrationId},});
+    
+ 
+  res.send("deleted")
+}
+ 
+ 
+
 module.exports = {
+  getAllIllustrations,
    
     generateIllustration,
     saveIllustration,
-    getAllIllustrations
+    deleteIllustration
+    
+     
      
     
    

@@ -1,5 +1,6 @@
 const db = require("../db/models/index");
 require('dotenv').config();
+const { Op } = require("sequelize");
 const { Configuration, OpenAIApi } = require("openai");
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
  
@@ -148,12 +149,58 @@ const coverChain = new LLMChain({
 });
 
 const getAllStory = async(req,res) =>{
+  const {size,page}=req.params
+  const {genreId,ageId,searchText} =req.query
+
+
+
+  const queryObject ={}
+  if (genreId && genreId!=="all") {
+    queryObject.genreId= genreId
+  }
+  if (ageId && ageId!=="all") {
+    queryObject.ageId= ageId
+  }
+  if (searchText) {
+    queryObject.title= { [Op.iLike]: `%${searchText}%` }
+  }
+
+   
+
   
   const allStory = await Story.findAll(
-    {include: [ {model:Like} ]}
+    {where:queryObject,include: [ {model:Like},{model:User}], limit: size,
+      offset: page * size }
+  )
+  const test = await Story.findAndCountAll(
+    {where:queryObject}
   )
 
-  res.json( allStory)
+  const contentLength = test.count
+  
+
+   
+  let pageCount = Math.ceil(contentLength/size)
+  res.json({allStory,pageCount,contentLength})
+
+ 
+}
+
+
+const getUserStory = async(req,res) =>{
+  const {currentUserId,page,size} = req.params
+  const allStory = await Story.findAndCountAll(
+    {where:{userId:currentUserId},include: [ {model:Like},{model:User}], limit: size,
+      offset: page * size }
+  )
+
+  let pageCount = Math.ceil(allStory.count/size)
+
+
+   
+  res.json({allStory,pageCount})
+
+ 
 }
 
 const createTest =  async (req, res) => { 
@@ -368,6 +415,24 @@ const getPages = async(req,res)=>{
   res.json(pages)
 }
 
+const test =async(req,res)=>{
+  res.json("hi")
+}
+
+
+const deleteStory =  async (req, res) => {
+  
+  const {storyId} = req.params;    
+
+  //Delete associated Likes and Pages
+  const like = await Like.destroy({where:{ storyId : storyId}});
+  const page = await Page.destroy({where:{ storyId : storyId}});   
+  const story = await Story.destroy({where:{id : storyId}});
+  res.json(story)
+
+}
+
+
  
 
 module.exports = {
@@ -375,9 +440,12 @@ module.exports = {
     createTest,
     getAllStory,
     getStory,
+    getUserStory,
     createCover,
     createPage,
     getPages,
+    test,
+    deleteStory
     
    
 };

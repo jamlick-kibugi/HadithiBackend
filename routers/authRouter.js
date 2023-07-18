@@ -10,6 +10,10 @@ const jwtCheck = auth({
   });
   
 
-
+  router.get("/users/:currentUserId", authController.getUser);
 router.post("/register", authController.register);
+
+router.get("/users", authController.getUsers);
+router.patch("/users", authController.updateUser);
+
 module.exports = router;

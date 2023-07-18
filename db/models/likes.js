@@ -18,7 +18,10 @@ const initLike= (sequelize) =>
           model: "users", 
           key: "id",
         }
-      }  
+      } , 
+      liked:{
+        type:DataTypes.BOOLEAN,     
+      }
     },
     {
       underscored: true,
