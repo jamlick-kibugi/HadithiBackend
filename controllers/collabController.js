@@ -122,6 +122,30 @@ const createCollab = async (req, res) => {
  
 }
 
+const updateCollab = async(req,res)=>{
+
+  const {collabId} = req.body
+
+  const overallChain = new SequentialChain({
+    chains: [titleChain,guideChain],    
+    inputVariables: ["story"],        
+    outputVariables: ["title","guide"],
+    verbose: true,
+  });
+  const chainExecutionResult = await overallChain.call({
+    story:'hi'
+  });
+  const title = formatData(chainExecutionResult.title)
+  const guide = formatData(chainExecutionResult.guide)
+
+
+  const newPage= await Collab.update({prompt:title,guide:guide},{where:{id:collabId} }) 
+  const updatedPage = await Collab.findAll({where:{id:collabId}  }) 
+  return res.json(updatedPage)   
+}
+
+
+
 const getCollab = async (req, res) => {
    const {currentCollabId}=req.params
 try {  
@@ -134,12 +158,25 @@ try {
 } 
 }
 
+const getAllCollab = async (req, res) => {
+   
+try {  
+ 
+ const collabs = await Collab.findAll({include:[User]}); 
+ res.json(collabs)
+} catch (err) {
+  
+ return res.status(400).json({ error: true, msg: err });    
+} 
+}
+
 const getUserCollab = async (req,res)=>{
   const {currentUserId}=req.params
   try {  
     
-    const collabs = await Collab.findAll({ where: {createdBy:currentUserId}
-    }); 
+    const collabs = await Collab.findAll(  {where:{createdBy:currentUserId},include: [{model:User}]   }); 
+
+  
 
 
       
@@ -174,11 +211,13 @@ const createCollabPage =async(req,res)=>{
     collabId:currentCollabId,
     pageContent:"",
     pageNumber: 1,
-    pageUrl:"https://images.pexels.com/photos/14569570/pexels-photo-14569570.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"       
+    pageUrl:"https://th.bing.com/th/id/OIP.URwsnfs59IJEIPBcXiEpdgHaHa?pid=ImgDet&rs=1"         
   });
   res.json(newPage)
 
 }
+
+ 
 
 const deleteCollabPage =async(req,res)=>{
   const {collabPageId}=req.params
@@ -274,13 +313,41 @@ try {
 const getShareCollab = async (req, res) => {
   const {currentUserId} = req.params
 try { 
-   const collabs = await Usercollab.findAll({ where: { userId: currentUserId},include:Collab })    
+   const collabs = await Usercollab.findAll({ where: { userId: currentUserId},include:[Collab,User]})    
+    
+ 
     
     return res.json(collabs)  
 } catch (err) {
   console.log(err)
   return res.status(400).json({ error: true, msg: err });    
 } 
+}
+
+const getMembersCollab = async (req, res) => {
+  const {collabId} = req.params
+try { 
+   const users = await Usercollab.findAll({ where: { collabId: collabId},include:[User]})    
+    
+ 
+    
+    return res.json(users)  
+} catch (err) {
+  console.log(err)
+  return res.status(400).json({ error: true, msg: err });    
+} 
+}
+
+const deleteCollab = async (req, res) => {
+
+  const {collabId} = req.params
+  const deletePage= await Collabpage.destroy({where:{collabId:collabId} })   
+  const deleteShare= await Usercollab.destroy({where:{collabId:collabId} })   
+  const deleteCollab= await Collab.destroy({where:{id:collabId} })  
+
+  res.send("deleted")
+
+
 }
 
  
@@ -290,7 +357,10 @@ module.exports = {
    
     createCollab,
     getCollab,
+    getAllCollab,
     getUserCollab,
+    deleteCollab,
+    getMembersCollab,
     createCollabPage,
     getUserCollabPages,
     deleteCollabPage,
@@ -300,7 +370,8 @@ module.exports = {
     createCoverImage,
     editCoverImage,
     shareCollab,
-    getShareCollab
+    getShareCollab,
+    updateCollab
    
 };
      

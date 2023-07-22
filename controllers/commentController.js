@@ -1,14 +1,18 @@
 
 const db = require("../db/models/index");
 const {Comment} =db;
+const {User} =db;
+const {Story} =db;
 
 async function getComments(req, res) {
   const { storyId } = req.params;
   try {
+     
+ 
     const comments = await Comment.findAll({
       where: {
         storyId: storyId,
-      },
+      },include:[Story]
     });
     return res.json(comments);
   } catch (err) {
@@ -17,16 +21,18 @@ async function getComments(req, res) {
 }
 async function addComment(req, res) {
     const { storyId } = req.params;
-    const {content,createdBy} = req.body;
+    const {content,currentUserId} = req.body;
      try {
        const newComment = await Comment.create({
           
          content: content,
          storyId:storyId,
-         createdBy:createdBy
+         createdBy:currentUserId
           
             
        });
+
+      
       
        return res.json(newComment);
      } catch (err) {

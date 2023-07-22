@@ -48,8 +48,8 @@ const {User}=db
 
      try {
 
-      const allStory = await Story.findAndCountAll({include: [{model:Like,where:{userId:userId}},{model:User}], where:{
-        userId:userId},  limit: size,
+      const allStory = await Story.findAndCountAll({include: [{model:Like,where:{
+        userId:userId}},{model:User}] ,  limit: size,
         offset: page * size});
 
       //  const allStory = await Like.findAndCountAll({include: [{model:Story,where:{userId:userId}},{model:User}], where:{

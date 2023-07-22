@@ -6,7 +6,13 @@ const initComment= (sequelize) =>
     "Comment",
     {
       content: {type: DataTypes.STRING},   
-      createdBy:{type: DataTypes.STRING}  ,  
+      createdBy:{
+        type: DataTypes.INTEGER  ,  
+        references: {
+          model: "users", 
+          key: "id",
+        }
+      },
       storyId:{
         type:DataTypes.INTEGER,
         references: {

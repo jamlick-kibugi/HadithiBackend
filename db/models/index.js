@@ -99,8 +99,8 @@ db.Comment.belongsTo(db.Story);
 db.User.hasMany(db.Illustration)
 db.Illustration.belongsTo(db.User)
 
-// db.User.hasMany(db.Collab)
-// db.Collab.belongsTo(db.User)
+db.User.hasMany(db.Collab)
+db.Collab.belongsTo(db.User)
 
 //m-m
 db.Collab.belongsToMany(db.User , {onDelete:"CASCADE",through:db.Usercollab})

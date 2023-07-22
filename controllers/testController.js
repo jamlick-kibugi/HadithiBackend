@@ -169,7 +169,7 @@ const getAllStory = async(req,res) =>{
 
   
   const allStory = await Story.findAll(
-    {where:queryObject,include: [ {model:Like},{model:User}], limit: size,
+    {where:queryObject,include: [ {model:Like },{model:User}], limit: size,
       offset: page * size }
   )
   const test = await Story.findAndCountAll(
