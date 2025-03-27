@@ -4,9 +4,11 @@ const { auth } = require('express-oauth2-jwt-bearer');
 const router = express.Router()
 
 const jwtCheck = auth({
-    audience: 'https://storybook/api',
-    issuerBaseURL: 'https://dev-ar0l70p2.us.auth0.com/',
+    audience: 'https://hadithiai/api',
+    issuerBaseURL: 'https://dev-v1icflozixzxhuj3.us.auth0.com/', 
     tokenSigningAlg: 'RS256'
+	 
+	
   });
   
 
