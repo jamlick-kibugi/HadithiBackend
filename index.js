@@ -7,16 +7,18 @@ app.use(cors());
 app.use(express.json()); 
 
 
-// CORS configuration
-const allowedOrigins = ['http://localhost:3000', 'https://servicefiti.co.ke' , 'https://hadithi.co.ke'];
+const allowedOrigins = ['http://localhost:3000', 'https://your-production-domain.com'];
+
 app.use(cors({
   origin: function(origin, callback) {
+    // Allow requests with no origin (like from curl requests, etc.)
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   }
+}));
 
 
 
